@@ -35,7 +35,7 @@ namespace CitiesApi.Controllers
             return Ok(city.Id);
         }
 
-        // POST api/<CityController>
+        // POST <CityController>
         [HttpPost]
         public void Post([FromBody] UserModel user)
         {

@@ -4,9 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CitiesApi.DAL;
-using CitiesApi.DAL.Model;
 using CitiesApi.DAL.Repository;
-using CitiesApi.Dtos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -19,15 +17,6 @@ using Microsoft.Extensions.Logging;
 
 namespace CitiesApi
 {
-    public class MappingProfile : Profile
-    {
-        public MappingProfile()
-        {
-            CreateMap<User, UserModel>();
-            CreateMap<UserModel, User>();
-        }
-    }
-
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -50,7 +39,7 @@ namespace CitiesApi
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ICityRepository, CityRepository>();
 
-            services.AddDbContext<DatabaseContext>(options =>
+            services.AddDbContext<IDatabaseContext, DatabaseContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("CityDatabase")));
 
             services.AddControllers();

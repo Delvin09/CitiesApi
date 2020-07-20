@@ -1,16 +1,18 @@
 ﻿using CitiesApi.DAL.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CitiesApi.DAL
 {
-    public class DatabaseContext : DbContext
+    public class DatabaseContext : DbContext, IDatabaseContext
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<DatabaseContext> _logger;
@@ -21,13 +23,17 @@ namespace CitiesApi.DAL
             _configuration = configuration;
             _logger = logger;
 
-           // Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
         public DbSet<User> Users { get; set; }
 
         public DbSet<City> Cities { get; set; }
+
+        public Task<IDbContextTransaction> BeginTransaction(IsolationLevel isolationLevel)
+        {
+            return Database.BeginTransactionAsync(isolationLevel);
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,7 +46,6 @@ namespace CitiesApi.DAL
             {
                 _logger.LogError(ex, "An error occurred while initializing the database from file.");
             }
-            //Database.EnsureCreated();
             base.OnModelCreating(modelBuilder);
         }
 
