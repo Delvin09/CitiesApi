@@ -32,11 +32,6 @@ namespace CitiesApi.DAL.Repository
             return _entities;
         }
 
-        public void Update(T model)
-        {
-            _entities.Update(model);
-        }
-
         public async Task SaveChanges()
         {
             await _databaseContext.SaveChangesAsync();
@@ -45,6 +40,11 @@ namespace CitiesApi.DAL.Repository
         public Task<IDbContextTransaction> BeginTransaction(IsolationLevel isolationLevel)
         {
             return _databaseContext.BeginTransaction(isolationLevel);
+        }
+
+        public void Dispose()
+        {
+            _databaseContext.Dispose();
         }
     }
 }

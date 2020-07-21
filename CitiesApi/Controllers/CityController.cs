@@ -7,6 +7,7 @@ using CitiesApi.DAL.Model;
 using CitiesApi.DAL.Repository;
 using CitiesApi.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace CitiesApi.Controllers
 {
@@ -17,12 +18,17 @@ namespace CitiesApi.Controllers
         private readonly ICityRepository _cityRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<CityController> _logger;
 
-        public CityController(ICityRepository cityRepository, IUserRepository userRepository, IMapper mapper)
+        public CityController(ICityRepository cityRepository,
+            IUserRepository userRepository,
+            IMapper mapper,
+            ILogger<CityController> logger)
         {
             _cityRepository = cityRepository;
             _userRepository = userRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         // GET <CityController>/Moscow
@@ -37,10 +43,19 @@ namespace CitiesApi.Controllers
 
         // POST <CityController>
         [HttpPost]
-        public void Post([FromBody] UserModel user)
+        public async Task<IActionResult> Post([FromBody] UserModel user)
         {
             var userEnity = _mapper.Map<User>(user);
-            _userRepository.AddOrUpdateBy(userEnity);
+            try
+            {
+                await _userRepository.AddOrUpdateBy(userEnity);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while adding/updating a user");
+                throw;
+            }
         }
     }
 }

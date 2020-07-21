@@ -8,10 +8,9 @@ using System.Transactions;
 
 namespace CitiesApi.DAL
 {
-    public interface IRepository<T>
+    public interface IRepository<T> : IDisposable
     {
         Task<T> Add(T model);
-        void Update(T model);
         void Delete(T model);
         IQueryable<T> GetAll();
         Task SaveChanges();

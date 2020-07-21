@@ -19,11 +19,13 @@ namespace CitiesApi.DAL.Repository
             using (var transaction = await BeginTransaction(System.Data.IsolationLevel.ReadCommitted))
             {
                 var existUser = await GetAll().FirstOrDefaultAsync(u => u.CityId == user.CityId && u.Name == user.Name);
-                if (existUser.Value != user.Value)
-                {
+                if (existUser == null)
+                    existUser = await Add(user);
+                else if (existUser.Value != user.Value)
                     existUser.Value = user.Value;
-                    await transaction.CommitAsync();
-                }
+
+                await SaveChanges();
+                await transaction.CommitAsync();
                 return existUser;
             }
         }

@@ -13,9 +13,6 @@ namespace CitiesApi.DAL.Repository
         {
         }
 
-        public Task<City> GetCityByName(string name)
-        {
-            return GetAll().FirstOrDefaultAsync(c => c.Name == name);
-        }
+        public Task<City> GetCityByName(string name) => GetAll().FirstOrDefaultAsync(c => c.Name == name);
     }
 }
